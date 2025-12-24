@@ -30,7 +30,7 @@ class ConnectionStore {
     this.socket = new PartySocket({
       host,
       room: roomId,
-      party: 'stopparty'
+      party: 'main'
     });
 
     this.socket.addEventListener('open', () => {
