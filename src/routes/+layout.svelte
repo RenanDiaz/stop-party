@@ -10,8 +10,8 @@
 
   let ready = $state(false);
 
-  onMount(() => {
-    initI18n();
+  onMount(async () => {
+    await initI18n();
     initSounds();
     ready = true;
   });

@@ -1,12 +1,12 @@
 import { browser } from '$app/environment';
-import { init, register, locale, _ } from 'svelte-i18n';
+import { init, register, locale, _, waitLocale } from 'svelte-i18n';
 
 // Register locales
 register('es', () => import('$lib/i18n/es.json'));
 register('en', () => import('$lib/i18n/en.json'));
 
 // Initialize i18n
-export function initI18n(): void {
+export async function initI18n(): Promise<void> {
   const storedLocale = browser ? localStorage.getItem('stopparty_locale') : null;
 
   // Detect browser locale, prefer Spanish for es-* locales
@@ -22,6 +22,9 @@ export function initI18n(): void {
     fallbackLocale: 'es',
     initialLocale: storedLocale ?? initialLocale
   });
+
+  // Wait for the locale to be fully loaded before returning
+  await waitLocale();
 }
 
 // Set locale and persist
