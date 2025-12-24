@@ -4,6 +4,7 @@
   import { initI18n } from '$lib/stores/i18n';
   import { initSounds } from '$lib/utils/sounds';
   import LanguageSelector from '$lib/components/LanguageSelector.svelte';
+  import SoundToggle from '$lib/components/SoundToggle.svelte';
   import Toast from '$lib/components/ui/Toast.svelte';
 
   let { children } = $props();
@@ -29,7 +30,10 @@
       <a href="/" class="text-xl font-bold text-accent-primary">
         StopParty
       </a>
-      <LanguageSelector />
+      <div class="flex items-center gap-2">
+        <SoundToggle />
+        <LanguageSelector />
+      </div>
     </header>
 
     <!-- Main Content -->

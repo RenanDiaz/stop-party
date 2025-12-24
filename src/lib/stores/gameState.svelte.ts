@@ -115,6 +115,7 @@ class GameStore {
     const me = this.players.find((p) => p.id === playerState.id);
     if (me) {
       connection.send({ type: me.isReady ? 'not_ready' : 'ready' });
+      playSound('ready');
     }
   }
 
@@ -168,6 +169,9 @@ class GameStore {
       targetPlayerId,
       valid
     });
+
+    // Play vote sound
+    playSound('vote');
 
     // Track local votes
     if (!this.localVotes[category]) {
@@ -373,6 +377,9 @@ class GameStore {
     this.localVotes = {};
     this.countdownRemaining = null;
 
+    // Play round start sound
+    playSound('roundStart');
+
     // Start round timer if configured
     if (this.config.roundTimeLimit > 0) {
       this.roundTimeRemaining = this.config.roundTimeLimit;
@@ -408,6 +415,9 @@ class GameStore {
     this.localVotes = {};
     this.graceTimeRemaining = null;
 
+    // Play voting start sound
+    playSound('votingStart');
+
     this.startVotingTimer();
   }
 
@@ -430,7 +440,7 @@ class GameStore {
     this.finalResults = results;
     this.stopTimer();
 
-    playSound('results');
+    playSound('gameOver');
     vibrate([100, 50, 100, 50, 200]);
   }
 
@@ -471,6 +481,13 @@ class GameStore {
     this.timerInterval = setInterval(() => {
       if (this.roundTimeRemaining !== null && this.roundTimeRemaining > 0) {
         this.roundTimeRemaining--;
+
+        // Play warning sounds for low time
+        if (this.roundTimeRemaining <= 5 && this.roundTimeRemaining > 0) {
+          playSound('tick');
+        } else if (this.roundTimeRemaining === 10) {
+          playSound('timeWarning');
+        }
       }
     }, 1000);
   }
@@ -481,6 +498,11 @@ class GameStore {
     this.timerInterval = setInterval(() => {
       if (this.graceTimeRemaining !== null && this.graceTimeRemaining > 0) {
         this.graceTimeRemaining--;
+
+        // Play tick sounds for grace period countdown
+        if (this.graceTimeRemaining > 0) {
+          playSound('tick');
+        }
       }
     }, 1000);
   }
@@ -491,6 +513,13 @@ class GameStore {
     this.timerInterval = setInterval(() => {
       if (this.votingTimeRemaining !== null && this.votingTimeRemaining > 0) {
         this.votingTimeRemaining--;
+
+        // Play warning sounds for low time
+        if (this.votingTimeRemaining <= 5 && this.votingTimeRemaining > 0) {
+          playSound('tick');
+        } else if (this.votingTimeRemaining === 10) {
+          playSound('timeWarning');
+        }
       }
     }, 1000);
   }
