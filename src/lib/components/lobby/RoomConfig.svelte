@@ -112,7 +112,9 @@
         class="w-full px-4 py-2 bg-bg-primary border border-accent-secondary rounded-lg text-text-primary focus:outline-none focus:border-accent-primary"
       >
         {#each VOTING_TIME_OPTIONS as seconds}
-          <option value={seconds}>{$_('config.seconds', { values: { n: seconds } })}</option>
+          <option value={seconds}>
+            {seconds === 0 ? $_('config.wait_ready') : $_('config.seconds', { values: { n: seconds } })}
+          </option>
         {/each}
       </select>
     </div>

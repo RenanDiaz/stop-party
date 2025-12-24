@@ -110,7 +110,10 @@
     "wrong_letter": "No empieza con la letra",
     "time_to_vote": "Tiempo para votar",
     "votes": "votos",
-    "waiting_votes": "Esperando votos..."
+    "waiting_votes": "Esperando votos...",
+    "im_ready": "¡Listo!",
+    "ready": "Listo",
+    "ready_count": "{ready} de {total} listos"
   },
   "results": {
     "title": "Resultados",

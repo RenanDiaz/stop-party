@@ -18,6 +18,7 @@ export type ClientMessage =
   | { type: 'update_answer'; category: string; answer: string }
   | { type: 'call_basta' }
   | { type: 'vote'; category: string; targetPlayerId: string; valid: boolean }
+  | { type: 'voting_ready' }
   | { type: 'host_decide_tie'; category: string; targetPlayerId: string; valid: boolean }
   | { type: 'kick_player'; targetPlayerId: string }
   | { type: 'update_config'; config: Partial<RoomConfig> }
@@ -38,6 +39,7 @@ export type ServerMessage =
   | { type: 'round_ended' }
   | { type: 'voting_started'; answers: AllPlayerAnswers; timeLimit: number }
   | { type: 'vote_received'; category: string; targetPlayerId: string; votesCount: number; totalVoters: number }
+  | { type: 'player_voting_ready'; playerId: string; readyCount: number; totalPlayers: number }
   | { type: 'voting_ended'; results: VotingResults }
   | { type: 'round_results'; results: RoundResults }
   | { type: 'ready_check_started'; timeLimit: number }

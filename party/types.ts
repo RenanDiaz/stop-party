@@ -24,6 +24,8 @@ export interface RoomState {
   votes: Map<string, Map<string, Vote[]>>; // category -> playerId -> votes
   votingStartedAt: number | null;
   readyCheckStartedAt: number | null;
+  votingReadyPlayers: Set<string>; // Players who finished voting and are ready
+  processingBasta: boolean; // Lock to prevent race conditions
 }
 
 // Timer references
