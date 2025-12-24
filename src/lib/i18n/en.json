@@ -110,7 +110,10 @@
     "wrong_letter": "Doesn't start with the letter",
     "time_to_vote": "Time to vote",
     "votes": "votes",
-    "waiting_votes": "Waiting for votes..."
+    "waiting_votes": "Waiting for votes...",
+    "im_ready": "Ready!",
+    "ready": "Ready",
+    "ready_count": "{ready} of {total} ready"
   },
   "results": {
     "title": "Results",

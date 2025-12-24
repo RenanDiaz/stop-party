@@ -36,7 +36,9 @@ export function createRoomState(roomId: string): RoomState {
     answers: new Map(),
     votes: new Map(),
     votingStartedAt: null,
-    readyCheckStartedAt: null
+    readyCheckStartedAt: null,
+    votingReadyPlayers: new Set(),
+    processingBasta: false
   };
 }
 

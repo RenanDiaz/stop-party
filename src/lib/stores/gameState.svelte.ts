@@ -48,6 +48,8 @@ class GameStore {
   votingResults = $state<VotingResults | null>(null);
   localVotes = $state<Record<string, Record<string, boolean>>>({});
   votingTimeLimit = $state(0);
+  votingReadyPlayers = $state<Set<string>>(new Set());
+  isVotingReady = $state(false);
 
   // Results
   roundResults = $state<RoundResults | null>(null);
@@ -195,6 +197,17 @@ class GameStore {
   }
 
   /**
+   * Mark voting as ready (done voting)
+   */
+  markVotingReady(): void {
+    if (!this.isVotingReady) {
+      connection.send({ type: 'voting_ready' });
+      this.isVotingReady = true;
+      playSound('ready');
+    }
+  }
+
+  /**
    * Update room config (host only)
    */
   updateConfig(config: Partial<RoomConfig>): void {
@@ -287,6 +300,10 @@ class GameStore {
 
       case 'vote_received':
         // Could show vote progress if needed
+        break;
+
+      case 'player_voting_ready':
+        this.votingReadyPlayers = new Set([...this.votingReadyPlayers, msg.playerId]);
         break;
 
       case 'voting_ended':
@@ -410,15 +427,20 @@ class GameStore {
     this.phase = 'voting';
     this.allAnswers = msg.answers;
     this.votingTimeLimit = msg.timeLimit;
-    this.votingTimeRemaining = msg.timeLimit;
+    this.votingTimeRemaining = msg.timeLimit > 0 ? msg.timeLimit : null;
     this.votingResults = null;
     this.localVotes = {};
     this.graceTimeRemaining = null;
+    this.votingReadyPlayers = new Set();
+    this.isVotingReady = false;
 
     // Play voting start sound
     playSound('votingStart');
 
-    this.startVotingTimer();
+    // Only start timer if there's a time limit
+    if (msg.timeLimit > 0) {
+      this.startVotingTimer();
+    }
   }
 
   private handleRoundResults(results: RoundResults): void {
@@ -558,6 +580,8 @@ class GameStore {
     this.allAnswers = null;
     this.votingResults = null;
     this.localVotes = {};
+    this.votingReadyPlayers = new Set();
+    this.isVotingReady = false;
     this.roundResults = null;
     this.finalResults = null;
     this.lastError = null;

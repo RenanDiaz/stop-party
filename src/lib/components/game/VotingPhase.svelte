@@ -3,6 +3,7 @@
   import type { AllPlayerAnswers } from '$shared/types';
   import VotingCard from './VotingCard.svelte';
   import Timer from '$lib/components/ui/Timer.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
 
   interface Props {
     categories: string[];
@@ -11,7 +12,11 @@
     currentPlayerId: string;
     localVotes: Record<string, Record<string, boolean>>;
     timeRemaining: number | null;
+    isReady: boolean;
+    readyCount: number;
+    totalPlayers: number;
     onVote: (category: string, playerId: string, valid: boolean) => void;
+    onReady: () => void;
   }
 
   let {
@@ -21,13 +26,30 @@
     currentPlayerId,
     localVotes,
     timeRemaining,
-    onVote
+    isReady,
+    readyCount,
+    totalPlayers,
+    onVote,
+    onReady
   }: Props = $props();
 
   let currentCategoryIndex = $state(0);
 
   const currentCategory = $derived(categories[currentCategoryIndex]);
   const playerIds = $derived(Object.keys(allAnswers));
+
+  // Calculate if all other players' answers have been voted on
+  const hasVotedAll = $derived(() => {
+    for (const category of categories) {
+      for (const playerId of playerIds) {
+        if (playerId === currentPlayerId) continue;
+        if (localVotes[category]?.[playerId] === undefined) {
+          return false;
+        }
+      }
+    }
+    return true;
+  });
 
   function nextCategory() {
     if (currentCategoryIndex < categories.length - 1) {
@@ -110,5 +132,30 @@
         aria-label="Category {i + 1}"
       />
     {/each}
+  </div>
+
+  <!-- Ready button and status -->
+  <div class="mt-4 pt-4 border-t border-accent-secondary/30">
+    <div class="flex items-center justify-between">
+      <p class="text-sm text-text-secondary">
+        {$_('voting.ready_count', { values: { ready: readyCount, total: totalPlayers } })}
+      </p>
+      {#if !isReady}
+        <Button
+          onclick={onReady}
+          disabled={!hasVotedAll()}
+          variant={hasVotedAll() ? 'primary' : 'secondary'}
+        >
+          {$_('voting.im_ready')}
+        </Button>
+      {:else}
+        <span class="text-accent-primary font-medium flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          {$_('voting.ready')}
+        </span>
+      {/if}
+    </div>
   </div>
 </div>

@@ -54,8 +54,8 @@ export const GRACE_TIME_OPTIONS = [0, 3, 5, 10];
 // Round time limit options (seconds, 0 = no limit)
 export const ROUND_TIME_OPTIONS = [0, 30, 60, 90, 120];
 
-// Voting time limit options (seconds)
-export const VOTING_TIME_OPTIONS = [15, 30, 45];
+// Voting time limit options (seconds, 0 = no limit, wait for all ready)
+export const VOTING_TIME_OPTIONS = [0, 15, 30, 45, 60];
 
 // Time between rounds options (seconds, 0 = wait for ready)
 export const BETWEEN_ROUNDS_OPTIONS = [0, 10, 20, 30];

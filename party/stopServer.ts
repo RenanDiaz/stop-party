@@ -152,6 +152,9 @@ export default class StopPartyServer implements Party.Server {
       case 'vote':
         this.handleVote(sender, msg.category, msg.targetPlayerId, msg.valid);
         break;
+      case 'voting_ready':
+        this.handleVotingReady(sender);
+        break;
       case 'host_decide_tie':
         this.handleHostDecideTie(sender, msg.category, msg.targetPlayerId, msg.valid);
         break;
@@ -463,12 +466,19 @@ export default class StopPartyServer implements Party.Server {
     const connectionInfo = this.connections.get(conn.id);
     if (!connectionInfo) return;
 
-    if (this.state.phase !== 'playing') {
+    // Atomic check: prevent race conditions when multiple players call basta simultaneously
+    if (this.state.phase !== 'playing' || this.state.processingBasta) {
       return;
     }
 
+    // Lock to prevent concurrent basta calls
+    this.state.processingBasta = true;
+
     const player = this.state.players.get(connectionInfo.playerId);
-    if (!player) return;
+    if (!player) {
+      this.state.processingBasta = false;
+      return;
+    }
 
     this.state.bastaCalledBy = connectionInfo.playerId;
     this.state.bastaCalledAt = Date.now();
@@ -499,10 +509,14 @@ export default class StopPartyServer implements Party.Server {
     clearTimer(this.timers, 'graceTimer');
     clearTimer(this.timers, 'roundTimer');
 
+    // Reset the basta lock for next round
+    this.state.processingBasta = false;
+
     this.broadcast({ type: 'round_ended' });
 
     // Start voting phase
     this.state.phase = 'voting';
+    this.state.votingReadyPlayers = new Set();
     initializeVoting(this.state);
 
     const allAnswers = getAllAnswersForVoting(this.state);
@@ -513,12 +527,15 @@ export default class StopPartyServer implements Party.Server {
       timeLimit: this.state.config.votingTimeLimit
     });
 
-    // Set voting timer
-    setVotingTimer(
-      this.timers,
-      this.state.config.votingTimeLimit * 1000,
-      () => this.handleVotingTimeout()
-    );
+    // Set voting timer only if there's a time limit
+    // If votingTimeLimit is 0, we wait for all players to mark themselves as ready
+    if (this.state.config.votingTimeLimit > 0) {
+      setVotingTimer(
+        this.timers,
+        this.state.config.votingTimeLimit * 1000,
+        () => this.handleVotingTimeout()
+      );
+    }
   }
 
   private handleVote(
@@ -570,6 +587,39 @@ export default class StopPartyServer implements Party.Server {
       votesCount: voteCount.validVotes + voteCount.invalidVotes,
       totalVoters: voteCount.totalVoters
     });
+  }
+
+  private handleVotingReady(conn: Party.Connection): void {
+    const connectionInfo = this.connections.get(conn.id);
+    if (!connectionInfo) return;
+
+    if (this.state.phase !== 'voting') {
+      return;
+    }
+
+    const player = this.state.players.get(connectionInfo.playerId);
+    if (!player || !player.isConnected) return;
+
+    // Mark this player as ready
+    this.state.votingReadyPlayers.add(connectionInfo.playerId);
+
+    // Notify all clients
+    const connectedPlayers = Array.from(this.state.players.values()).filter(p => p.isConnected);
+    this.broadcast({
+      type: 'player_voting_ready',
+      playerId: connectionInfo.playerId,
+      readyCount: this.state.votingReadyPlayers.size,
+      totalPlayers: connectedPlayers.length
+    });
+
+    // Check if all connected players are ready
+    const allReady = connectedPlayers.every(p => this.state.votingReadyPlayers.has(p.id));
+
+    if (allReady) {
+      // All players ready, fill missing votes and finish
+      fillMissingVotesAsValid(this.state);
+      this.finishVoting();
+    }
   }
 
   private handleVotingTimeout(): void {

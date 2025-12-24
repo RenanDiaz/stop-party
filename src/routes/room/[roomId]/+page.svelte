@@ -210,7 +210,11 @@
       currentPlayerId={playerState.id ?? ''}
       localVotes={gameState.localVotes}
       timeRemaining={gameState.votingTimeRemaining}
+      isReady={gameState.isVotingReady}
+      readyCount={gameState.votingReadyPlayers.size}
+      totalPlayers={gameState.players.filter(p => p.isConnected).length}
       onVote={(cat, pid, valid) => gameState.vote(cat, pid, valid)}
+      onReady={() => gameState.markVotingReady()}
     />
 
   <!-- RESULTS PHASE -->
