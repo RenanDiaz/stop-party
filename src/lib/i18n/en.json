@@ -1,0 +1,172 @@
+{
+  "app": {
+    "name": "StopParty",
+    "tagline": "The Stop/Basta game to play with friends"
+  },
+  "home": {
+    "create_room": "Create Room",
+    "join_room": "Join Room",
+    "enter_name": "Your name",
+    "enter_code": "Room code",
+    "join": "Join",
+    "how_to_play": "How to play",
+    "rules": {
+      "title": "Game Rules",
+      "rule1": "A random letter is chosen",
+      "rule2": "Everyone writes words starting with that letter for each category",
+      "rule3": "The first to finish yells STOP!",
+      "rule4": "Answers are voted and points are added",
+      "rule5": "100 points for unique answer, 50 for duplicate"
+    }
+  },
+  "lobby": {
+    "title": "Waiting Room",
+    "room_code": "Room code",
+    "copy_link": "Copy link",
+    "link_copied": "Link copied!",
+    "players": "Players",
+    "waiting_for_players": "Waiting for players...",
+    "min_players": "Minimum {min} players to start",
+    "start_game": "Start Game",
+    "ready": "Ready",
+    "not_ready": "Not ready",
+    "host": "Host",
+    "you": "You",
+    "settings": "Settings"
+  },
+  "config": {
+    "title": "Room Settings",
+    "victory_mode": "Victory mode",
+    "rounds": "By rounds",
+    "points": "By points",
+    "num_rounds": "Number of rounds",
+    "target_points": "Target points",
+    "grace_time": "Time after STOP!",
+    "immediate": "Immediate cut",
+    "seconds": "{n} seconds",
+    "show_progress": "Show others' progress",
+    "round_time": "Round time limit",
+    "no_limit": "No limit",
+    "voting_time": "Voting time",
+    "between_rounds": "Time between rounds",
+    "wait_ready": "Wait for everyone to be ready",
+    "categories": "Categories",
+    "preset": "Category preset",
+    "custom": "Custom"
+  },
+  "presets": {
+    "classic": "Classic Latino",
+    "geography": "Geography",
+    "party": "Party",
+    "kids": "Kids"
+  },
+  "categories": {
+    "name": "Person's name",
+    "animal": "Animal",
+    "city_country": "City or Country",
+    "fruit_food": "Fruit or Food",
+    "color": "Color",
+    "thing": "Thing or Object",
+    "profession": "Profession or Job",
+    "country": "Country",
+    "city": "City",
+    "river": "River",
+    "mountain": "Mountain or Volcano",
+    "sea_ocean": "Sea or Ocean",
+    "capital": "Capital",
+    "continent": "Continent",
+    "song": "Song",
+    "artist": "Artist or Band",
+    "movie": "Movie",
+    "tv_series": "TV Series",
+    "drink": "Drink",
+    "food": "Food",
+    "celebrity": "Celebrity",
+    "toy": "Toy",
+    "cartoon": "Cartoon",
+    "superhero": "Superhero",
+    "fruit": "Fruit"
+  },
+  "game": {
+    "round": "Round",
+    "of": "of",
+    "letter": "Letter",
+    "time_remaining": "Time remaining",
+    "basta": "STOP!",
+    "basta_called_by": "STOP! called by {name}",
+    "finish_writing": "Finish writing...",
+    "waiting_for_round": "Waiting for next round...",
+    "get_ready": "Get ready!",
+    "your_answers": "Your answers",
+    "filled": "filled"
+  },
+  "voting": {
+    "title": "Voting",
+    "vote_answers": "Vote on answers",
+    "your_answer": "Your answer",
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "no_answer": "No answer",
+    "wrong_letter": "Doesn't start with the letter",
+    "time_to_vote": "Time to vote",
+    "votes": "votes",
+    "waiting_votes": "Waiting for votes..."
+  },
+  "results": {
+    "title": "Results",
+    "round_results": "Round {round} Results",
+    "your_score": "Your score",
+    "total_score": "Total score",
+    "unique": "Unique",
+    "duplicate": "Duplicate",
+    "invalid": "Invalid",
+    "next_round": "Next Round",
+    "waiting_ready": "Waiting for everyone to be ready..."
+  },
+  "game_over": {
+    "title": "Game Over!",
+    "winner": "Winner!",
+    "final_standings": "Final Standings",
+    "play_again": "Play Again",
+    "back_to_lobby": "Back to Home"
+  },
+  "scoring": {
+    "unique": "Unique (+100)",
+    "duplicate": "Duplicate (+50)",
+    "invalid": "Invalid (0)"
+  },
+  "host": {
+    "kick": "Kick",
+    "transfer_host": "Transfer host",
+    "confirm_kick": "Kick {name}?",
+    "confirm_transfer": "Transfer host role to {name}?"
+  },
+  "errors": {
+    "room_full": "Room is full",
+    "room_not_found": "Room not found",
+    "game_in_progress": "Game already in progress",
+    "not_host": "Only the host can do this",
+    "not_enough_players": "Not enough players",
+    "invalid_phase": "Invalid action in this phase",
+    "invalid_message": "Invalid message",
+    "player_not_found": "Player not found",
+    "already_voted": "Already voted on this answer",
+    "cannot_vote_self": "Can't vote on your own answer",
+    "duplicate_name": "That name is already taken",
+    "name_too_short": "Name is too short (minimum 2 characters)",
+    "name_too_long": "Name is too long (maximum 20 characters)",
+    "connection_error": "Connection error"
+  },
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "save": "Save",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "share": "Share"
+  }
+}
