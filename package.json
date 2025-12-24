@@ -1,0 +1,41 @@
+{
+  "name": "stopparty",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "dev:party": "partykit dev",
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:party\"",
+    "build": "vite build",
+    "build:party": "partykit build",
+    "preview": "vite preview",
+    "deploy": "npm run deploy:party && npm run deploy:app",
+    "deploy:party": "partykit deploy",
+    "deploy:app": "vercel deploy --prod",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "type": "module",
+  "devDependencies": {
+    "@sveltejs/adapter-vercel": "^5.5.0",
+    "@sveltejs/kit": "^2.9.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
+    "prettier-plugin-svelte": "^3.3.2",
+    "svelte": "^5.14.1",
+    "svelte-check": "^4.1.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.4"
+  },
+  "dependencies": {
+    "partykit": "^0.0.111",
+    "partysocket": "^1.0.2",
+    "svelte-i18n": "^4.0.1"
+  }
+}

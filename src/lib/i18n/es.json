@@ -1,0 +1,172 @@
+{
+  "app": {
+    "name": "StopParty",
+    "tagline": "El juego de Stop/Basta para jugar con amigos"
+  },
+  "home": {
+    "create_room": "Crear Sala",
+    "join_room": "Unirse a Sala",
+    "enter_name": "Tu nombre",
+    "enter_code": "Código de sala",
+    "join": "Unirse",
+    "how_to_play": "Cómo jugar",
+    "rules": {
+      "title": "Reglas del juego",
+      "rule1": "Se elige una letra al azar",
+      "rule2": "Todos escriben palabras que empiecen con esa letra para cada categoría",
+      "rule3": "El primero en terminar grita ¡BASTA!",
+      "rule4": "Se votan las respuestas y se suman puntos",
+      "rule5": "100 puntos por respuesta única, 50 por repetida"
+    }
+  },
+  "lobby": {
+    "title": "Sala de Espera",
+    "room_code": "Código de sala",
+    "copy_link": "Copiar enlace",
+    "link_copied": "¡Enlace copiado!",
+    "players": "Jugadores",
+    "waiting_for_players": "Esperando jugadores...",
+    "min_players": "Mínimo {min} jugadores para iniciar",
+    "start_game": "Iniciar Juego",
+    "ready": "Listo",
+    "not_ready": "No listo",
+    "host": "Anfitrión",
+    "you": "Tú",
+    "settings": "Configuración"
+  },
+  "config": {
+    "title": "Configuración de Sala",
+    "victory_mode": "Modo de victoria",
+    "rounds": "Por rondas",
+    "points": "Por puntos",
+    "num_rounds": "Número de rondas",
+    "target_points": "Puntos objetivo",
+    "grace_time": "Tiempo después de ¡BASTA!",
+    "immediate": "Corte inmediato",
+    "seconds": "{n} segundos",
+    "show_progress": "Mostrar progreso de otros",
+    "round_time": "Tiempo límite por ronda",
+    "no_limit": "Sin límite",
+    "voting_time": "Tiempo para votar",
+    "between_rounds": "Tiempo entre rondas",
+    "wait_ready": "Esperar a que todos estén listos",
+    "categories": "Categorías",
+    "preset": "Preset de categorías",
+    "custom": "Personalizado"
+  },
+  "presets": {
+    "classic": "Clásico Latino",
+    "geography": "Geografía",
+    "party": "Fiesta",
+    "kids": "Infantil"
+  },
+  "categories": {
+    "name": "Nombre de persona",
+    "animal": "Animal",
+    "city_country": "Ciudad o País",
+    "fruit_food": "Fruta o Comida",
+    "color": "Color",
+    "thing": "Cosa u Objeto",
+    "profession": "Profesión u Oficio",
+    "country": "País",
+    "city": "Ciudad",
+    "river": "Río",
+    "mountain": "Montaña o Volcán",
+    "sea_ocean": "Mar u Océano",
+    "capital": "Capital",
+    "continent": "Continente",
+    "song": "Canción",
+    "artist": "Artista o Banda",
+    "movie": "Película",
+    "tv_series": "Serie de TV",
+    "drink": "Bebida",
+    "food": "Comida",
+    "celebrity": "Famoso/Celebridad",
+    "toy": "Juguete",
+    "cartoon": "Caricatura",
+    "superhero": "Superhéroe",
+    "fruit": "Fruta"
+  },
+  "game": {
+    "round": "Ronda",
+    "of": "de",
+    "letter": "Letra",
+    "time_remaining": "Tiempo restante",
+    "basta": "¡BASTA!",
+    "basta_called_by": "¡BASTA! llamado por {name}",
+    "finish_writing": "Termina de escribir...",
+    "waiting_for_round": "Esperando la siguiente ronda...",
+    "get_ready": "¡Prepárate!",
+    "your_answers": "Tus respuestas",
+    "filled": "completadas"
+  },
+  "voting": {
+    "title": "Votación",
+    "vote_answers": "Vota las respuestas",
+    "your_answer": "Tu respuesta",
+    "valid": "Válida",
+    "invalid": "Inválida",
+    "no_answer": "Sin respuesta",
+    "wrong_letter": "No empieza con la letra",
+    "time_to_vote": "Tiempo para votar",
+    "votes": "votos",
+    "waiting_votes": "Esperando votos..."
+  },
+  "results": {
+    "title": "Resultados",
+    "round_results": "Resultados de la Ronda {round}",
+    "your_score": "Tu puntuación",
+    "total_score": "Puntuación total",
+    "unique": "Única",
+    "duplicate": "Repetida",
+    "invalid": "Inválida",
+    "next_round": "Siguiente Ronda",
+    "waiting_ready": "Esperando que todos estén listos..."
+  },
+  "game_over": {
+    "title": "¡Fin del Juego!",
+    "winner": "¡Ganador!",
+    "final_standings": "Posiciones Finales",
+    "play_again": "Jugar de Nuevo",
+    "back_to_lobby": "Volver al Inicio"
+  },
+  "scoring": {
+    "unique": "Única (+100)",
+    "duplicate": "Repetida (+50)",
+    "invalid": "Inválida (0)"
+  },
+  "host": {
+    "kick": "Expulsar",
+    "transfer_host": "Transferir anfitrión",
+    "confirm_kick": "¿Expulsar a {name}?",
+    "confirm_transfer": "¿Transferir rol de anfitrión a {name}?"
+  },
+  "errors": {
+    "room_full": "La sala está llena",
+    "room_not_found": "Sala no encontrada",
+    "game_in_progress": "El juego ya está en progreso",
+    "not_host": "Solo el anfitrión puede hacer esto",
+    "not_enough_players": "No hay suficientes jugadores",
+    "invalid_phase": "Acción no válida en esta fase",
+    "invalid_message": "Mensaje no válido",
+    "player_not_found": "Jugador no encontrado",
+    "already_voted": "Ya votaste esta respuesta",
+    "cannot_vote_self": "No puedes votar tu propia respuesta",
+    "duplicate_name": "Ese nombre ya está en uso",
+    "name_too_short": "El nombre es muy corto (mínimo 2 caracteres)",
+    "name_too_long": "El nombre es muy largo (máximo 20 caracteres)",
+    "connection_error": "Error de conexión"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "back": "Volver",
+    "yes": "Sí",
+    "no": "No",
+    "or": "o",
+    "share": "Compartir"
+  }
+}
