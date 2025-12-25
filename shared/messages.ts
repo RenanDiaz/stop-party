@@ -5,7 +5,9 @@ import type {
   AllPlayerAnswers,
   VotingResults,
   RoundResults,
-  FinalResults
+  FinalResults,
+  ReactionType,
+  AnswerReactions
 } from './types';
 
 // Messages from client to server
@@ -23,6 +25,7 @@ export type ClientMessage =
   | { type: 'kick_player'; targetPlayerId: string }
   | { type: 'update_config'; config: Partial<RoomConfig> }
   | { type: 'transfer_host'; targetPlayerId: string }
+  | { type: 'react'; category: string; targetPlayerId: string; reaction: ReactionType }
   | { type: 'ping' };
 
 // Messages from server to client
@@ -39,6 +42,7 @@ export type ServerMessage =
   | { type: 'round_ended' }
   | { type: 'voting_started'; answers: AllPlayerAnswers; timeLimit: number }
   | { type: 'vote_received'; category: string; targetPlayerId: string; votesCount: number; totalVoters: number }
+  | { type: 'reaction_received'; category: string; targetPlayerId: string; reactions: AnswerReactions }
   | { type: 'player_voting_ready'; playerId: string; readyCount: number; totalPlayers: number }
   | { type: 'voting_ended'; results: VotingResults }
   | { type: 'round_results'; results: RoundResults }

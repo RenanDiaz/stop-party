@@ -167,6 +167,9 @@ export default class StopPartyServer implements Party.Server {
       case 'transfer_host':
         this.handleTransferHost(sender, msg.targetPlayerId);
         break;
+      case 'react':
+        this.handleReaction(sender, msg.category, msg.targetPlayerId, msg.reaction);
+        break;
       case 'ping':
         this.sendTo(sender, { type: 'pong' });
         break;
@@ -858,6 +861,60 @@ export default class StopPartyServer implements Party.Server {
         newHostName: newHost.name
       });
     }
+  }
+
+  private handleReaction(
+    conn: Party.Connection,
+    category: string,
+    targetPlayerId: string,
+    reaction: string
+  ): void {
+    const connectionInfo = this.connections.get(conn.id);
+    if (!connectionInfo) return;
+
+    // Only allow reactions during voting phase
+    if (this.state.phase !== 'voting') {
+      return;
+    }
+
+    // Get or create category reactions map
+    if (!this.state.reactions.has(category)) {
+      this.state.reactions.set(category, new Map());
+    }
+    const categoryReactions = this.state.reactions.get(category)!;
+
+    // Get or create player reactions
+    if (!categoryReactions.has(targetPlayerId)) {
+      categoryReactions.set(targetPlayerId, {});
+    }
+    const playerReactions = categoryReactions.get(targetPlayerId)!;
+
+    // Get or create reaction array
+    if (!playerReactions[reaction]) {
+      playerReactions[reaction] = [];
+    }
+
+    const reactorId = connectionInfo.playerId;
+
+    // Toggle reaction (add if not present, remove if present)
+    const reactionIndex = playerReactions[reaction].indexOf(reactorId);
+    if (reactionIndex === -1) {
+      playerReactions[reaction].push(reactorId);
+    } else {
+      playerReactions[reaction].splice(reactionIndex, 1);
+      // Clean up empty arrays
+      if (playerReactions[reaction].length === 0) {
+        delete playerReactions[reaction];
+      }
+    }
+
+    // Broadcast updated reactions
+    this.broadcast({
+      type: 'reaction_received',
+      category,
+      targetPlayerId,
+      reactions: playerReactions
+    });
   }
 
   private cleanupDisconnectedPlayers(): void {

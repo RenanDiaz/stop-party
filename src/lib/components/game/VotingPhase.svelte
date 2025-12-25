@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from '$lib/stores/i18n';
-  import type { AllPlayerAnswers } from '$shared/types';
+  import type { AllPlayerAnswers, ReactionType, AnswerReactions } from '$shared/types';
   import VotingCard from './VotingCard.svelte';
   import Timer from '$lib/components/ui/Timer.svelte';
   import Button from '$lib/components/ui/Button.svelte';
@@ -11,11 +11,13 @@
     currentLetter: string;
     currentPlayerId: string;
     localVotes: Record<string, Record<string, boolean>>;
+    reactions: Record<string, Record<string, AnswerReactions>>;
     timeRemaining: number | null;
     isReady: boolean;
     readyCount: number;
     totalPlayers: number;
     onVote: (category: string, playerId: string, valid: boolean) => void;
+    onReact: (category: string, playerId: string, reaction: ReactionType) => void;
     onReady: () => void;
   }
 
@@ -25,11 +27,13 @@
     currentLetter,
     currentPlayerId,
     localVotes,
+    reactions,
     timeRemaining,
     isReady,
     readyCount,
     totalPlayers,
     onVote,
+    onReact,
     onReady
   }: Props = $props();
 
@@ -110,6 +114,7 @@
       {@const answer = playerData.answers[currentCategory] ?? ''}
       {@const isSelf = playerId === currentPlayerId}
       {@const voted = localVotes[currentCategory]?.[playerId] ?? null}
+      {@const answerReactions = reactions[currentCategory]?.[playerId] ?? {}}
 
       <VotingCard
         playerName={playerData.playerName}
@@ -117,7 +122,9 @@
         letter={currentLetter}
         {isSelf}
         {voted}
+        reactions={answerReactions}
         onVote={(valid) => onVote(currentCategory, playerId, valid)}
+        onReact={(reaction) => onReact(currentCategory, playerId, reaction)}
       />
     {/each}
   </div>

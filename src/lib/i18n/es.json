@@ -113,7 +113,8 @@
     "waiting_votes": "Esperando votos...",
     "im_ready": "¡Listo!",
     "ready": "Listo",
-    "ready_count": "{ready} de {total} listos"
+    "ready_count": "{ready} de {total} listos",
+    "react_with": "Reaccionar con {reaction}"
   },
   "results": {
     "title": "Resultados",
