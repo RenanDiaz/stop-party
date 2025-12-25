@@ -13,6 +13,7 @@ import {
   removePlayer,
   disconnectPlayer,
   reconnectPlayer,
+  findPlayerByDeviceId,
   toPublicPlayer,
   getPublicRoomState,
   updateConfig,
@@ -179,9 +180,23 @@ export default class StopPartyServer implements Party.Server {
   private handleJoin(playerName: string, deviceId: string, conn: Party.Connection): void {
     // Check if game already in progress
     if (this.state.phase !== 'lobby' && this.state.phase !== 'ready_check') {
+      // Check if this player exists (for closing old connection)
+      const existingPlayer = findPlayerByDeviceId(this.state, deviceId);
+      const oldConnectionId = existingPlayer?.oldConnectionId;
+
       // Try to reconnect
       const reconnected = reconnectPlayer(this.state, deviceId, conn.id);
       if (reconnected) {
+        // Close the old connection if it exists and is different
+        if (oldConnectionId && oldConnectionId !== conn.id) {
+          const oldConn = this.room.getConnection(oldConnectionId);
+          if (oldConn) {
+            console.log(`[${this.room.id}] Closing stale connection for: ${reconnected.name}`);
+            oldConn.close();
+          }
+          this.connections.delete(oldConnectionId);
+        }
+
         this.connections.set(conn.id, {
           playerId: conn.id,
           deviceId
@@ -250,8 +265,21 @@ export default class StopPartyServer implements Party.Server {
     }
 
     // Check for existing connection with same deviceId
+    const existingPlayerInfo = findPlayerByDeviceId(this.state, deviceId);
+    const oldConnId = existingPlayerInfo?.oldConnectionId;
+
     const existingPlayer = reconnectPlayer(this.state, deviceId, conn.id);
     if (existingPlayer) {
+      // Close the old connection if it exists and is different
+      if (oldConnId && oldConnId !== conn.id) {
+        const oldConn = this.room.getConnection(oldConnId);
+        if (oldConn) {
+          console.log(`[${this.room.id}] Closing stale connection in lobby for: ${existingPlayer.name}`);
+          oldConn.close();
+        }
+        this.connections.delete(oldConnId);
+      }
+
       this.connections.set(conn.id, {
         playerId: conn.id,
         deviceId
