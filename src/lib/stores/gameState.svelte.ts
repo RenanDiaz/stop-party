@@ -72,6 +72,8 @@ class GameStore {
   private unsubscribe: (() => void) | null = null;
   private timerInterval: ReturnType<typeof setInterval> | null = null;
 
+  private reconnectUnsubscribe: (() => void) | null = null;
+
   /**
    * Join a room
    */
@@ -82,25 +84,50 @@ class GameStore {
     // Subscribe to messages
     this.unsubscribe = connection.subscribe((msg) => this.handleMessage(msg));
 
+    // Subscribe to reconnection events for automatic rejoin
+    this.reconnectUnsubscribe = connection.onReconnect(() => {
+      console.log('[GameState] Reconnection detected, rejoining room');
+      this.sendJoinMessage();
+    });
+
     // Connect
     connection.connect(roomId);
 
     // Wait for connection then send join
+    this.waitForConnectionAndJoin();
+  }
+
+  /**
+   * Wait for connection and send join message
+   */
+  private waitForConnectionAndJoin(): void {
+    const maxAttempts = 150; // 15 seconds (100ms * 150)
+    let attempts = 0;
+
     const checkConnection = setInterval(() => {
+      attempts++;
+
       if (connection.connected) {
         clearInterval(checkConnection);
-        connection.send({
-          type: 'join',
-          playerName,
-          deviceId: playerState.deviceId
-        });
+        this.sendJoinMessage();
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkConnection);
+        console.log('[GameState] Connection timeout after 15 seconds');
       }
     }, 100);
+  }
 
-    // Timeout after 10 seconds
-    setTimeout(() => {
-      clearInterval(checkConnection);
-    }, 10000);
+  /**
+   * Send join message to server
+   */
+  private sendJoinMessage(): void {
+    if (connection.connected && playerState.name) {
+      connection.send({
+        type: 'join',
+        playerName: playerState.name,
+        deviceId: playerState.deviceId
+      });
+    }
   }
 
   /**
@@ -110,6 +137,10 @@ class GameStore {
     if (this.unsubscribe) {
       this.unsubscribe();
       this.unsubscribe = null;
+    }
+    if (this.reconnectUnsubscribe) {
+      this.reconnectUnsubscribe();
+      this.reconnectUnsubscribe = null;
     }
     connection.disconnect();
     this.resetState();
