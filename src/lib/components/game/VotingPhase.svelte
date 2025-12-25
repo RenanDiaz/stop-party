@@ -66,6 +66,33 @@
       currentCategoryIndex--;
     }
   }
+
+  // Swipe handling
+  let touchStartX = $state(0);
+  let touchEndX = $state(0);
+  const SWIPE_THRESHOLD = 50;
+
+  function handleTouchStart(e: TouchEvent) {
+    touchStartX = e.touches[0].clientX;
+    touchEndX = e.touches[0].clientX;
+  }
+
+  function handleTouchMove(e: TouchEvent) {
+    touchEndX = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd() {
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff > 0) {
+        // Swipe left -> next category
+        nextCategory();
+      } else {
+        // Swipe right -> previous category
+        prevCategory();
+      }
+    }
+  }
 </script>
 
 <div class="space-y-4">
@@ -108,7 +135,12 @@
   </div>
 
   <!-- Answers for current category -->
-  <div class="space-y-3">
+  <div
+    class="space-y-3 touch-pan-y"
+    ontouchstart={handleTouchStart}
+    ontouchmove={handleTouchMove}
+    ontouchend={handleTouchEnd}
+  >
     {#each playerIds as playerId}
       {@const playerData = allAnswers[playerId]}
       {@const answer = playerData.answers[currentCategory] ?? ''}
