@@ -63,6 +63,14 @@ export interface Vote {
   isValid: boolean;
 }
 
+// Quick reaction types
+export type ReactionType = '👍' | '😂' | '🔥' | '🤔';
+
+// Reactions on an answer
+export interface AnswerReactions {
+  [reaction: string]: string[]; // reaction emoji -> array of player IDs who reacted
+}
+
 // Votes for a category
 export interface CategoryVotes {
   category: string;

@@ -2,6 +2,9 @@
   import { _ } from '$lib/stores/i18n';
   import Button from '$lib/components/ui/Button.svelte';
   import { answerStartsWithLetter } from '$lib/utils/validation';
+  import type { ReactionType, AnswerReactions } from '$shared/types';
+
+  const AVAILABLE_REACTIONS: ReactionType[] = ['👍', '😂', '🔥', '🤔'];
 
   interface Props {
     playerName: string;
@@ -10,7 +13,9 @@
     isSelf: boolean;
     voted?: boolean | null;
     disabled?: boolean;
+    reactions?: AnswerReactions;
     onVote?: (valid: boolean) => void;
+    onReact?: (reaction: ReactionType) => void;
   }
 
   let {
@@ -20,12 +25,24 @@
     isSelf,
     voted = null,
     disabled = false,
-    onVote
+    reactions = {},
+    onVote,
+    onReact
   }: Props = $props();
 
   const isEmpty = $derived(!answer || answer.trim() === '');
   const startsWithLetter = $derived(!isEmpty && answerStartsWithLetter(answer, letter));
   const isAutoInvalid = $derived(isEmpty || !startsWithLetter);
+
+  // Get total reaction count for a specific emoji
+  function getReactionCount(reaction: ReactionType): number {
+    return reactions[reaction]?.length ?? 0;
+  }
+
+  // Check if there are any reactions
+  const hasReactions = $derived(
+    Object.values(reactions).some((arr) => arr && arr.length > 0)
+  );
 </script>
 
 <div
@@ -83,4 +100,38 @@
       </span>
     {/if}
   </div>
+
+  <!-- Quick Reactions -->
+  {#if !isSelf}
+    <div class="flex items-center gap-1 mt-2 pt-2 border-t border-accent-secondary/20">
+      {#each AVAILABLE_REACTIONS as reaction}
+        {@const count = getReactionCount(reaction)}
+        <button
+          onclick={() => onReact?.(reaction)}
+          class="flex items-center gap-1 px-2 py-1 rounded-full text-sm transition-all
+                 hover:bg-accent-secondary/20 active:scale-95
+                 {count > 0 ? 'bg-accent-secondary/10' : ''}"
+          aria-label={$_('voting.react_with', { values: { reaction } })}
+        >
+          <span>{reaction}</span>
+          {#if count > 0}
+            <span class="text-xs text-text-secondary">{count}</span>
+          {/if}
+        </button>
+      {/each}
+    </div>
+  {:else if hasReactions}
+    <!-- Show reactions on own answer (read-only) -->
+    <div class="flex items-center gap-1 mt-2 pt-2 border-t border-accent-secondary/20">
+      {#each AVAILABLE_REACTIONS as reaction}
+        {@const count = getReactionCount(reaction)}
+        {#if count > 0}
+          <span class="flex items-center gap-1 px-2 py-1 rounded-full text-sm bg-accent-secondary/10">
+            <span>{reaction}</span>
+            <span class="text-xs text-text-secondary">{count}</span>
+          </span>
+        {/if}
+      {/each}
+    </div>
+  {/if}
 </div>

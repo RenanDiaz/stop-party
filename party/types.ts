@@ -3,7 +3,8 @@ import type {
   RoomConfig,
   Player,
   PlayerAnswers,
-  Vote
+  Vote,
+  AnswerReactions
 } from '../shared/types';
 
 // Internal room state (server-side only)
@@ -22,6 +23,7 @@ export interface RoomState {
   bastaCalledAt: number | null;
   answers: Map<string, PlayerAnswers>;
   votes: Map<string, Map<string, Vote[]>>; // category -> playerId -> votes
+  reactions: Map<string, Map<string, AnswerReactions>>; // category -> playerId -> reactions
   votingStartedAt: number | null;
   readyCheckStartedAt: number | null;
   votingReadyPlayers: Set<string>; // Players who finished voting and are ready

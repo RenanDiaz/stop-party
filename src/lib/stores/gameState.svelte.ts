@@ -6,7 +6,9 @@ import type {
   AllPlayerAnswers,
   VotingResults,
   RoundResults,
-  FinalResults
+  FinalResults,
+  ReactionType,
+  AnswerReactions
 } from '$shared/types';
 import type { ServerMessage } from '$shared/messages';
 import { DEFAULT_CONFIG } from '$shared/constants';
@@ -50,6 +52,9 @@ class GameStore {
   votingTimeLimit = $state(0);
   votingReadyPlayers = $state<Set<string>>(new Set());
   isVotingReady = $state(false);
+
+  // Reactions state: category -> playerId -> reactions
+  reactions = $state<Record<string, Record<string, AnswerReactions>>>({});
 
   // Results
   roundResults = $state<RoundResults | null>(null);
@@ -208,6 +213,18 @@ class GameStore {
   }
 
   /**
+   * Send a reaction to an answer
+   */
+  react(category: string, targetPlayerId: string, reaction: ReactionType): void {
+    connection.send({
+      type: 'react',
+      category,
+      targetPlayerId,
+      reaction
+    });
+  }
+
+  /**
    * Update room config (host only)
    */
   updateConfig(config: Partial<RoomConfig>): void {
@@ -300,6 +317,14 @@ class GameStore {
 
       case 'vote_received':
         // Could show vote progress if needed
+        break;
+
+      case 'reaction_received':
+        // Update reactions state
+        if (!this.reactions[msg.category]) {
+          this.reactions[msg.category] = {};
+        }
+        this.reactions[msg.category][msg.targetPlayerId] = msg.reactions;
         break;
 
       case 'player_voting_ready':
@@ -430,6 +455,7 @@ class GameStore {
     this.votingTimeRemaining = msg.timeLimit > 0 ? msg.timeLimit : null;
     this.votingResults = null;
     this.localVotes = {};
+    this.reactions = {};
     this.graceTimeRemaining = null;
     this.votingReadyPlayers = new Set();
     this.isVotingReady = false;
@@ -580,6 +606,7 @@ class GameStore {
     this.allAnswers = null;
     this.votingResults = null;
     this.localVotes = {};
+    this.reactions = {};
     this.votingReadyPlayers = new Set();
     this.isVotingReady = false;
     this.roundResults = null;

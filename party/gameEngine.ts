@@ -35,6 +35,7 @@ export function createRoomState(roomId: string): RoomState {
     bastaCalledAt: null,
     answers: new Map(),
     votes: new Map(),
+    reactions: new Map(),
     votingStartedAt: null,
     readyCheckStartedAt: null,
     votingReadyPlayers: new Set(),
@@ -202,6 +203,7 @@ export function initializeRound(state: RoomState, letter: string): void {
   state.bastaCalledAt = null;
   state.answers = new Map();
   state.votes = new Map();
+  state.reactions = new Map();
 
   // Reset player ready state and filled count
   for (const player of state.players.values()) {
