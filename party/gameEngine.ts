@@ -109,35 +109,57 @@ export function disconnectPlayer(state: RoomState, playerId: string): void {
 }
 
 /**
- * Reconnect a player by device ID
+ * Find a player by device ID (regardless of connection status)
+ * Returns the old connection ID if found
  */
-export function reconnectPlayer(state: RoomState, deviceId: string, newConnectionId: string): Player | null {
+export function findPlayerByDeviceId(state: RoomState, deviceId: string): { player: Player; oldConnectionId: string } | null {
   for (const [oldId, player] of state.players) {
-    if (player.deviceId === deviceId && !player.isConnected) {
-      // Update player with new connection ID
-      state.players.delete(oldId);
-      player.id = newConnectionId;
-      player.isConnected = true;
-      player.lastConnectedAt = Date.now();
-      state.players.set(newConnectionId, player);
-
-      // Update host reference if needed
-      if (player.isHost) {
-        state.hostId = newConnectionId;
-      }
-
-      // Transfer answers to new ID
-      const answers = state.answers.get(oldId);
-      if (answers) {
-        state.answers.delete(oldId);
-        answers.playerId = newConnectionId;
-        state.answers.set(newConnectionId, answers);
-      }
-
-      return player;
+    if (player.deviceId === deviceId) {
+      return { player, oldConnectionId: oldId };
     }
   }
   return null;
+}
+
+/**
+ * Reconnect a player by device ID
+ * Now handles both disconnected players AND players still marked as connected
+ * (race condition where new connection arrives before old one closes)
+ */
+export function reconnectPlayer(state: RoomState, deviceId: string, newConnectionId: string): Player | null {
+  const found = findPlayerByDeviceId(state, deviceId);
+  if (!found) {
+    return null;
+  }
+
+  const { player, oldConnectionId } = found;
+
+  // Skip if it's the same connection ID (already connected with this socket)
+  if (oldConnectionId === newConnectionId) {
+    return null;
+  }
+
+  // Update player with new connection ID
+  state.players.delete(oldConnectionId);
+  player.id = newConnectionId;
+  player.isConnected = true;
+  player.lastConnectedAt = Date.now();
+  state.players.set(newConnectionId, player);
+
+  // Update host reference if needed
+  if (player.isHost) {
+    state.hostId = newConnectionId;
+  }
+
+  // Transfer answers to new ID
+  const answers = state.answers.get(oldConnectionId);
+  if (answers) {
+    state.answers.delete(oldConnectionId);
+    answers.playerId = newConnectionId;
+    state.answers.set(newConnectionId, answers);
+  }
+
+  return player;
 }
 
 /**
