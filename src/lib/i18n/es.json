@@ -24,6 +24,7 @@
     "room_code": "Código de sala",
     "copy_link": "Copiar enlace",
     "link_copied": "¡Enlace copiado!",
+    "share_invite": "¡Únete a mi partida de Stop! ¿Te animas a jugar?",
     "players": "Jugadores",
     "waiting_for_players": "Esperando jugadores...",
     "min_players": "Mínimo {min} jugadores para iniciar",

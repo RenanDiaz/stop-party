@@ -41,7 +41,7 @@
       try {
         await navigator.share({
           title: 'StopParty',
-          text: $_('app.tagline'),
+          text: $_('lobby.share_invite'),
           url: getRoomUrl()
         });
       } catch {
