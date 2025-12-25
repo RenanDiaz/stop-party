@@ -4,6 +4,7 @@
   import VotingCard from './VotingCard.svelte';
   import Timer from '$lib/components/ui/Timer.svelte';
   import Button from '$lib/components/ui/Button.svelte';
+  import { answerStartsWithLetter } from '$lib/utils/validation';
 
   interface Props {
     categories: string[];
@@ -42,11 +43,21 @@
   const currentCategory = $derived(categories[currentCategoryIndex]);
   const playerIds = $derived(Object.keys(allAnswers));
 
+  // Check if an answer is auto-invalid (empty or wrong letter)
+  function isAutoInvalid(answer: string | undefined): boolean {
+    if (!answer || answer.trim() === '') return true;
+    return !answerStartsWithLetter(answer, currentLetter);
+  }
+
   // Calculate if all other players' answers have been voted on
+  // Auto-invalid answers (empty or wrong letter) don't need manual votes
   const hasVotedAll = $derived(() => {
     for (const category of categories) {
       for (const playerId of playerIds) {
         if (playerId === currentPlayerId) continue;
+        const answer = allAnswers[playerId]?.answers[category];
+        // Skip auto-invalid answers - they don't need manual votes
+        if (isAutoInvalid(answer)) continue;
         if (localVotes[category]?.[playerId] === undefined) {
           return false;
         }
