@@ -3,6 +3,7 @@
   import type { RoundResults as RoundResultsType } from '$shared/types';
   import { SCORE_UNIQUE, SCORE_DUPLICATE } from '$shared/constants';
   import Badge from '$lib/components/ui/Badge.svelte';
+  import RoundComments from './RoundComments.svelte';
 
   interface Props {
     results: RoundResultsType;
@@ -101,4 +102,7 @@
       {/each}
     </div>
   </div>
+
+  <!-- Comments -->
+  <RoundComments />
 </div>

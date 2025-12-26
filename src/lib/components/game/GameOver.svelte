@@ -3,6 +3,7 @@
   import type { FinalResults } from '$shared/types';
   import Button from '$lib/components/ui/Button.svelte';
   import Badge from '$lib/components/ui/Badge.svelte';
+  import RoundComments from './RoundComments.svelte';
 
   interface Props {
     results: FinalResults;
@@ -75,6 +76,11 @@
     <p class="text-sm text-text-secondary mt-4">
       {results.totalRounds} {$_('game.round').toLowerCase()}s
     </p>
+  </div>
+
+  <!-- Comments -->
+  <div class="w-full max-w-sm">
+    <RoundComments />
   </div>
 
   <!-- Actions -->

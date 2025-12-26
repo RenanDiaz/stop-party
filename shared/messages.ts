@@ -7,7 +7,8 @@ import type {
   RoundResults,
   FinalResults,
   ReactionType,
-  AnswerReactions
+  AnswerReactions,
+  RoundComment
 } from './types';
 
 // Messages from client to server
@@ -26,6 +27,7 @@ export type ClientMessage =
   | { type: 'update_config'; config: Partial<RoomConfig> }
   | { type: 'transfer_host'; targetPlayerId: string }
   | { type: 'react'; category: string; targetPlayerId: string; reaction: ReactionType }
+  | { type: 'send_comment'; text: string }
   | { type: 'ping' };
 
 // Messages from server to client
@@ -54,6 +56,8 @@ export type ServerMessage =
   | { type: 'host_changed'; newHostId: string; newHostName: string }
   | { type: 'player_kicked'; playerId: string; playerName: string }
   | { type: 'timer_update'; timerType: 'round' | 'voting' | 'between_rounds'; remaining: number }
+  | { type: 'comment_received'; comment: RoundComment }
+  | { type: 'comments_cleared' }
   | { type: 'pong' };
 
 // Error codes

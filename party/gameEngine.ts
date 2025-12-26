@@ -39,7 +39,8 @@ export function createRoomState(roomId: string): RoomState {
     votingStartedAt: null,
     readyCheckStartedAt: null,
     votingReadyPlayers: new Set(),
-    processingBasta: false
+    processingBasta: false,
+    comments: []
   };
 }
 
@@ -202,7 +203,8 @@ export function getPublicRoomState(state: RoomState): PublicRoomState {
     bastaCalledBy: state.bastaCalledBy,
     bastaCalledAt: state.bastaCalledAt,
     roundTimeRemaining: null,
-    votingTimeRemaining: null
+    votingTimeRemaining: null,
+    comments: state.comments
   };
 }
 
@@ -226,6 +228,7 @@ export function initializeRound(state: RoomState, letter: string): void {
   state.answers = new Map();
   state.votes = new Map();
   state.reactions = new Map();
+  state.comments = [];
 
   // Reset player ready state and filled count
   for (const player of state.players.values()) {

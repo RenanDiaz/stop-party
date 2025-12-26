@@ -66,3 +66,6 @@ export const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // No confusi
 
 // Countdown duration before round starts
 export const COUNTDOWN_DURATION_MS = 3000;
+
+// Comment constraints
+export const MAX_COMMENT_LENGTH = 100;

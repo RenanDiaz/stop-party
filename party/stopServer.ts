@@ -1,11 +1,12 @@
 import type * as Party from 'partykit/server';
 import type { ClientMessage, ServerMessage } from '../shared/messages';
-import type { RoomConfig } from '../shared/types';
+import type { RoomConfig, RoundComment } from '../shared/types';
 import type { RoomState, Timers, ConnectionInfo } from './types';
 import {
   MIN_PLAYERS,
   COUNTDOWN_DURATION_MS,
-  RECONNECT_TIMEOUT_MS
+  RECONNECT_TIMEOUT_MS,
+  MAX_COMMENT_LENGTH
 } from '../shared/constants';
 import {
   createRoomState,
@@ -170,6 +171,9 @@ export default class StopPartyServer implements Party.Server {
         break;
       case 'react':
         this.handleReaction(sender, msg.category, msg.targetPlayerId, msg.reaction);
+        break;
+      case 'send_comment':
+        this.handleSendComment(sender, msg.text);
         break;
       case 'ping':
         this.sendTo(sender, { type: 'pong' });
@@ -943,6 +947,38 @@ export default class StopPartyServer implements Party.Server {
       category,
       targetPlayerId,
       reactions: playerReactions
+    });
+  }
+
+  private handleSendComment(conn: Party.Connection, text: string): void {
+    const connectionInfo = this.connections.get(conn.id);
+    if (!connectionInfo) return;
+
+    // Only allow comments during results and game_over phases
+    if (this.state.phase !== 'results' && this.state.phase !== 'ready_check' && this.state.phase !== 'game_over') {
+      return;
+    }
+
+    const player = this.state.players.get(connectionInfo.playerId);
+    if (!player || !player.isConnected) return;
+
+    // Validate and sanitize comment
+    const trimmedText = text.trim().slice(0, MAX_COMMENT_LENGTH);
+    if (trimmedText.length === 0) return;
+
+    const comment: RoundComment = {
+      id: `${connectionInfo.playerId}-${Date.now()}`,
+      playerId: connectionInfo.playerId,
+      playerName: player.name,
+      text: trimmedText,
+      timestamp: Date.now()
+    };
+
+    this.state.comments.push(comment);
+
+    this.broadcast({
+      type: 'comment_received',
+      comment
     });
   }
 
