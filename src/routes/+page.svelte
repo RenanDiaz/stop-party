@@ -9,7 +9,7 @@
 <div class="max-w-md mx-auto space-y-8">
   <!-- Logo and Tagline -->
   <div class="text-center space-y-2">
-    <h1 class="text-4xl font-bold text-accent-primary">StopParty</h1>
+    <img src="/logo.png" alt="StopParty" class="h-24 mx-auto" />
     <p class="text-text-secondary">{$_('app.tagline')}</p>
   </div>
 
@@ -77,6 +77,7 @@
         </li>
       </ul>
     </div>
+
   {:else}
     <div class="card">
       <button

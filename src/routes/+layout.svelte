@@ -27,8 +27,8 @@
   <div class="min-h-screen bg-bg-primary flex flex-col">
     <!-- Header -->
     <header class="safe-top px-4 py-3 flex items-center justify-between border-b border-accent-secondary">
-      <a href="/" class="text-xl font-bold text-accent-primary">
-        StopParty
+      <a href="/" class="flex items-center gap-2">
+        <img src="/icons/icon-96.png" alt="StopParty" class="h-8 w-8 rounded-lg" />
       </a>
       <div class="flex items-center gap-2">
         <SoundToggle />
