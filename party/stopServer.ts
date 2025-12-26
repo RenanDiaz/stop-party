@@ -733,8 +733,8 @@ export default class StopPartyServer implements Party.Server {
       return;
     }
 
-    // Start ready check phase
-    setTimeout(() => this.startReadyCheck(), 3000);
+    // Start ready check phase immediately (results are shown alongside ready button)
+    this.startReadyCheck();
   }
 
   private startReadyCheck(): void {

@@ -372,6 +372,8 @@ class GameStore {
 
       case 'ready_check_started':
         this.phase = 'ready_check';
+        // Reset all players' ready state for the new round
+        this.players = this.players.map((p) => ({ ...p, isReady: false }));
         if (msg.timeLimit > 0) {
           this.betweenRoundsTimeRemaining = msg.timeLimit;
           this.startBetweenRoundsTimer();

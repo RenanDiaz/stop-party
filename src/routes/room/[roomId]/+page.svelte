@@ -219,7 +219,7 @@
       onReady={() => gameState.markVotingReady()}
     />
 
-  <!-- RESULTS PHASE -->
+  <!-- RESULTS PHASE (brief transition, auto-advances to ready_check) -->
   {:else if gameState.phase === 'results' && gameState.roundResults}
     <RoundResults
       results={gameState.roundResults}
@@ -227,14 +227,30 @@
       currentPlayerId={playerState.id}
     />
 
-  <!-- READY CHECK PHASE -->
+  <!-- READY CHECK PHASE: Show results + ready button -->
   {:else if gameState.phase === 'ready_check'}
-    <ReadyCheck
-      players={gameState.players}
-      currentPlayerId={playerState.id}
-      timeRemaining={gameState.betweenRoundsTimeRemaining}
-      onToggleReady={() => gameState.toggleReady()}
-    />
+    {#if gameState.roundResults}
+      <RoundResults
+        results={gameState.roundResults}
+        categories={gameState.config.categories}
+        currentPlayerId={playerState.id}
+      />
+      <div class="mt-6">
+        <ReadyCheck
+          players={gameState.players}
+          currentPlayerId={playerState.id}
+          timeRemaining={gameState.betweenRoundsTimeRemaining}
+          onToggleReady={() => gameState.toggleReady()}
+        />
+      </div>
+    {:else}
+      <ReadyCheck
+        players={gameState.players}
+        currentPlayerId={playerState.id}
+        timeRemaining={gameState.betweenRoundsTimeRemaining}
+        onToggleReady={() => gameState.toggleReady()}
+      />
+    {/if}
 
   <!-- GAME OVER PHASE -->
   {:else if gameState.phase === 'game_over' && gameState.finalResults}
