@@ -130,6 +130,15 @@ export interface FinalResults {
   totalRounds: number;
 }
 
+// Round comment
+export interface RoundComment {
+  id: string;
+  playerId: string;
+  playerName: string;
+  text: string;
+  timestamp: number;
+}
+
 // Public room state (sent to clients)
 export interface PublicRoomState {
   roomId: string;
@@ -146,4 +155,5 @@ export interface PublicRoomState {
   bastaCalledAt: number | null;
   roundTimeRemaining: number | null;
   votingTimeRemaining: number | null;
+  comments: RoundComment[];
 }

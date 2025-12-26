@@ -162,6 +162,12 @@
     "name_too_long": "Name is too long (maximum 20 characters)",
     "connection_error": "Connection error"
   },
+  "comments": {
+    "title": "Comments",
+    "empty": "No comments yet...",
+    "placeholder": "Write a comment...",
+    "send": "Send"
+  },
   "common": {
     "loading": "Loading...",
     "cancel": "Cancel",

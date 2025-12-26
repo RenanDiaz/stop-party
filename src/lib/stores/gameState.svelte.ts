@@ -8,7 +8,8 @@ import type {
   RoundResults,
   FinalResults,
   ReactionType,
-  AnswerReactions
+  AnswerReactions,
+  RoundComment
 } from '$shared/types';
 import type { ServerMessage } from '$shared/messages';
 import { DEFAULT_CONFIG } from '$shared/constants';
@@ -59,6 +60,9 @@ class GameStore {
   // Results
   roundResults = $state<RoundResults | null>(null);
   finalResults = $state<FinalResults | null>(null);
+
+  // Comments
+  comments = $state<RoundComment[]>([]);
 
   // Timers
   roundTimeRemaining = $state<number | null>(null);
@@ -256,6 +260,16 @@ class GameStore {
   }
 
   /**
+   * Send a comment
+   */
+  sendComment(text: string): void {
+    connection.send({
+      type: 'send_comment',
+      text
+    });
+  }
+
+  /**
    * Update room config (host only)
    */
   updateConfig(config: Partial<RoomConfig>): void {
@@ -416,6 +430,14 @@ class GameStore {
       case 'timer_update':
         this.handleTimerUpdate(msg);
         break;
+
+      case 'comment_received':
+        this.comments = [...this.comments, msg.comment];
+        break;
+
+      case 'comments_cleared':
+        this.comments = [];
+        break;
     }
   }
 
@@ -431,6 +453,7 @@ class GameStore {
     this.usedLetters = state.usedLetters;
     this.roundStartedAt = state.roundStartedAt;
     this.bastaCalledBy = state.bastaCalledBy;
+    this.comments = state.comments;
 
     // Set player ID from the joined player
     const me = state.players.find((p) => p.name === playerState.name);
@@ -451,6 +474,7 @@ class GameStore {
     this.bastaCalledByName = null;
     this.localVotes = {};
     this.countdownRemaining = null;
+    this.comments = [];
 
     // Play round start sound
     playSound('roundStart');
@@ -644,6 +668,7 @@ class GameStore {
     this.isVotingReady = false;
     this.roundResults = null;
     this.finalResults = null;
+    this.comments = [];
     this.lastError = null;
     this.countdownRemaining = null;
     this.roundTimeRemaining = null;
