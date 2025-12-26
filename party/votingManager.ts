@@ -102,7 +102,7 @@ export function calculateVotingResults(state: RoomState): VotingResults {
 
       // Auto-invalidate empty answers or answers not starting with letter
       let isValid = true;
-      let needsTieBreaker = false;
+      const needsTieBreaker = false;
 
       if (!answer || answer.trim() === '') {
         isValid = false;
@@ -110,12 +110,11 @@ export function calculateVotingResults(state: RoomState): VotingResults {
         isValid = false;
       } else if (totalVoters > 0) {
         // Majority rule: >50% invalid votes means invalid
+        // In case of tie, answer is considered VALID (benefit of the doubt)
         if (invalidVotes > totalVoters / 2) {
           isValid = false;
-        } else if (invalidVotes === validVotes && totalVoters > 0) {
-          // Exact tie - needs host decision
-          needsTieBreaker = true;
         }
+        // Note: tie (invalidVotes === validVotes) results in isValid = true
       }
 
       results[category].push({
@@ -191,11 +190,21 @@ export function getAllAnswersForVoting(state: RoomState): AllPlayerAnswers {
  */
 export function fillMissingVotesAsValid(state: RoomState): void {
   for (const category of state.config.categories) {
-    const categoryVotes = state.votes.get(category);
-    if (!categoryVotes) continue;
+    let categoryVotes = state.votes.get(category);
+    if (!categoryVotes) {
+      categoryVotes = new Map();
+      state.votes.set(category, categoryVotes);
+    }
 
-    for (const [targetPlayerId] of state.players) {
-      const playerVotes = categoryVotes.get(targetPlayerId) ?? [];
+    for (const [targetPlayerId, targetPlayer] of state.players) {
+      if (!targetPlayer.isConnected) continue;
+
+      // Ensure player has an entry in the votes map
+      let playerVotes = categoryVotes.get(targetPlayerId);
+      if (!playerVotes) {
+        playerVotes = [];
+        categoryVotes.set(targetPlayerId, playerVotes);
+      }
 
       // Get voters who haven't voted
       for (const [voterId, voter] of state.players) {
