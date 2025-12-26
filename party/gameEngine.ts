@@ -160,6 +160,31 @@ export function reconnectPlayer(state: RoomState, deviceId: string, newConnectio
     state.answers.set(newConnectionId, answers);
   }
 
+  // Transfer votes to new ID (both as voter and as vote target)
+  for (const [category, categoryVotes] of state.votes) {
+    // Transfer votes received by this player
+    const playerVotes = categoryVotes.get(oldConnectionId);
+    if (playerVotes) {
+      categoryVotes.delete(oldConnectionId);
+      categoryVotes.set(newConnectionId, playerVotes);
+    }
+
+    // Update votes cast by this player (change voterId in other players' vote arrays)
+    for (const [targetPlayerId, votes] of categoryVotes) {
+      for (const vote of votes) {
+        if (vote.voterId === oldConnectionId) {
+          vote.voterId = newConnectionId;
+        }
+      }
+    }
+  }
+
+  // Transfer voting ready status
+  if (state.votingReadyPlayers.has(oldConnectionId)) {
+    state.votingReadyPlayers.delete(oldConnectionId);
+    state.votingReadyPlayers.add(newConnectionId);
+  }
+
   return player;
 }
 
