@@ -9,7 +9,7 @@
 <div class="max-w-md mx-auto space-y-8">
   <!-- Logo and Tagline -->
   <div class="text-center space-y-2">
-    <h1 class="text-4xl font-bold text-accent-primary">StopParty</h1>
+    <img src="/logo.png" alt="StopParty" class="h-24 mx-auto" />
     <p class="text-text-secondary">{$_('app.tagline')}</p>
   </div>
 
@@ -78,14 +78,6 @@
       </ul>
     </div>
 
-    <!-- Temporary: Logo variations review -->
-    <a
-      href="/logo-variations.svg"
-      target="_blank"
-      class="block text-center text-xs text-text-secondary/50 hover:text-accent-primary transition-colors"
-    >
-      Ver variaciones de logo
-    </a>
   {:else}
     <div class="card">
       <button
