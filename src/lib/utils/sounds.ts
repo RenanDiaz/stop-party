@@ -15,7 +15,8 @@ export type SoundName =
   | 'click' // UI click
   | 'error' // Error / invalid action
   | 'ready' // Player ready toggle
-  | 'tick'; // Timer tick (final seconds)
+  | 'tick' // Timer tick (final seconds)
+  | 'message'; // New comment/message received
 
 let audioContext: AudioContext | null = null;
 let soundsEnabled = true;
@@ -272,6 +273,12 @@ const soundGenerators: Record<SoundName, (ctx: AudioContext) => void> = {
   // Timer tick (final seconds)
   tick: (ctx) => {
     playTone(ctx, 440, 0.05, 'sine', 0.2);
+  },
+
+  // New message/comment notification
+  message: (ctx) => {
+    playTone(ctx, 800, 0.08, 'sine', 0.2);
+    playTone(ctx, 1000, 0.1, 'sine', 0.15, 0.06);
   }
 };
 

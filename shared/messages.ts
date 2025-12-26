@@ -28,6 +28,7 @@ export type ClientMessage =
   | { type: 'transfer_host'; targetPlayerId: string }
   | { type: 'react'; category: string; targetPlayerId: string; reaction: ReactionType }
   | { type: 'send_comment'; text: string }
+  | { type: 'typing'; isTyping: boolean }
   | { type: 'ping' };
 
 // Messages from server to client
@@ -58,6 +59,7 @@ export type ServerMessage =
   | { type: 'timer_update'; timerType: 'round' | 'voting' | 'between_rounds'; remaining: number }
   | { type: 'comment_received'; comment: RoundComment }
   | { type: 'comments_cleared' }
+  | { type: 'player_typing'; playerId: string; playerName: string; isTyping: boolean }
   | { type: 'pong' };
 
 // Error codes

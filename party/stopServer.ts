@@ -175,6 +175,9 @@ export default class StopPartyServer implements Party.Server {
       case 'send_comment':
         this.handleSendComment(sender, msg.text);
         break;
+      case 'typing':
+        this.handleTyping(sender, msg.isTyping);
+        break;
       case 'ping':
         this.sendTo(sender, { type: 'pong' });
         break;
@@ -979,6 +982,27 @@ export default class StopPartyServer implements Party.Server {
     this.broadcast({
       type: 'comment_received',
       comment
+    });
+  }
+
+  private handleTyping(conn: Party.Connection, isTyping: boolean): void {
+    const connectionInfo = this.connections.get(conn.id);
+    if (!connectionInfo) return;
+
+    // Only allow typing indicator during comment-allowed phases
+    if (this.state.phase !== 'results' && this.state.phase !== 'ready_check' && this.state.phase !== 'game_over') {
+      return;
+    }
+
+    const player = this.state.players.get(connectionInfo.playerId);
+    if (!player || !player.isConnected) return;
+
+    // Broadcast typing status to everyone except the sender
+    this.broadcastExcept(conn.id, {
+      type: 'player_typing',
+      playerId: connectionInfo.playerId,
+      playerName: player.name,
+      isTyping
     });
   }
 
