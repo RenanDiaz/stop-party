@@ -166,7 +166,10 @@
     "title": "Comentarios",
     "empty": "Sin comentarios aún...",
     "placeholder": "Escribe un comentario...",
-    "send": "Enviar"
+    "send": "Enviar",
+    "typing": "está escribiendo...",
+    "typing_plural": "están escribiendo...",
+    "and": "y"
   },
   "common": {
     "loading": "Cargando...",

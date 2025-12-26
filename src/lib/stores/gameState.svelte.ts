@@ -64,6 +64,9 @@ class GameStore {
   // Comments
   comments = $state<RoundComment[]>([]);
 
+  // Typing indicator: Map of playerId -> playerName for players currently typing
+  typingPlayers = $state<Map<string, string>>(new Map());
+
   // Timers
   roundTimeRemaining = $state<number | null>(null);
   votingTimeRemaining = $state<number | null>(null);
@@ -270,6 +273,16 @@ class GameStore {
   }
 
   /**
+   * Send typing status
+   */
+  setTyping(isTyping: boolean): void {
+    connection.send({
+      type: 'typing',
+      isTyping
+    });
+  }
+
+  /**
    * Update room config (host only)
    */
   updateConfig(config: Partial<RoomConfig>): void {
@@ -437,10 +450,29 @@ class GameStore {
         if (msg.comment.playerId !== playerState.id) {
           playSound('message');
         }
+        // Clear typing indicator for this player since they sent a message
+        if (this.typingPlayers.has(msg.comment.playerId)) {
+          const newMap = new Map(this.typingPlayers);
+          newMap.delete(msg.comment.playerId);
+          this.typingPlayers = newMap;
+        }
         break;
 
       case 'comments_cleared':
         this.comments = [];
+        this.typingPlayers = new Map();
+        break;
+
+      case 'player_typing':
+        {
+          const newMap = new Map(this.typingPlayers);
+          if (msg.isTyping) {
+            newMap.set(msg.playerId, msg.playerName);
+          } else {
+            newMap.delete(msg.playerId);
+          }
+          this.typingPlayers = newMap;
+        }
         break;
     }
   }
@@ -673,6 +705,7 @@ class GameStore {
     this.roundResults = null;
     this.finalResults = null;
     this.comments = [];
+    this.typingPlayers = new Map();
     this.lastError = null;
     this.countdownRemaining = null;
     this.roundTimeRemaining = null;
