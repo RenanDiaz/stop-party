@@ -433,6 +433,10 @@ class GameStore {
 
       case 'comment_received':
         this.comments = [...this.comments, msg.comment];
+        // Play sound only if the comment is from another player
+        if (msg.comment.playerId !== playerState.id) {
+          playSound('message');
+        }
         break;
 
       case 'comments_cleared':

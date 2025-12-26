@@ -6,8 +6,22 @@
 
   let commentText = $state('');
   let inputElement: HTMLInputElement | undefined = $state();
+  let commentsContainer: HTMLDivElement | undefined = $state();
 
   const comments = $derived(gameState.comments);
+
+  // Auto-scroll to bottom when new comments arrive
+  $effect(() => {
+    if (comments.length > 0 && commentsContainer) {
+      // Use requestAnimationFrame to ensure DOM is updated before scrolling
+      requestAnimationFrame(() => {
+        commentsContainer?.scrollTo({
+          top: commentsContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      });
+    }
+  });
 
   function handleSubmit(e: Event) {
     e.preventDefault();
@@ -36,7 +50,7 @@
   </h3>
 
   <!-- Comments list -->
-  <div class="space-y-2 max-h-48 overflow-y-auto mb-3">
+  <div bind:this={commentsContainer} class="space-y-2 max-h-48 overflow-y-auto mb-3">
     {#if comments.length === 0}
       <p class="text-text-secondary text-sm italic">{$_('comments.empty')}</p>
     {:else}
