@@ -225,7 +225,42 @@ export default class StopPartyServer implements Party.Server {
       return;
     }
 
-    // Validate name
+    // Check for existing connection with same deviceId (reconnection)
+    // This must happen BEFORE name validation to allow reconnecting players
+    const existingPlayerInfo = findPlayerByDeviceId(this.state, deviceId);
+    const oldConnId = existingPlayerInfo?.oldConnectionId;
+
+    const existingPlayer = reconnectPlayer(this.state, deviceId, conn.id);
+    if (existingPlayer) {
+      // Close the old connection if it exists and is different
+      if (oldConnId && oldConnId !== conn.id) {
+        const oldConn = this.room.getConnection(oldConnId);
+        if (oldConn) {
+          console.log(`[${this.room.id}] Closing stale connection in lobby for: ${existingPlayer.name}`);
+          oldConn.close();
+        }
+        this.connections.delete(oldConnId);
+      }
+
+      this.connections.set(conn.id, {
+        playerId: conn.id,
+        deviceId
+      });
+
+      this.sendTo(conn, {
+        type: 'room_state',
+        state: getPublicRoomState(this.state)
+      });
+
+      this.broadcast({
+        type: 'player_reconnected',
+        playerId: conn.id
+      });
+
+      return;
+    }
+
+    // Validate name (only for new players, not reconnections)
     const nameValidation = validatePlayerName(playerName);
     if (nameValidation === 'too_short') {
       this.sendTo(conn, {
@@ -261,40 +296,6 @@ export default class StopPartyServer implements Party.Server {
         message: 'Room is full',
         code: 'ROOM_FULL'
       });
-      return;
-    }
-
-    // Check for existing connection with same deviceId
-    const existingPlayerInfo = findPlayerByDeviceId(this.state, deviceId);
-    const oldConnId = existingPlayerInfo?.oldConnectionId;
-
-    const existingPlayer = reconnectPlayer(this.state, deviceId, conn.id);
-    if (existingPlayer) {
-      // Close the old connection if it exists and is different
-      if (oldConnId && oldConnId !== conn.id) {
-        const oldConn = this.room.getConnection(oldConnId);
-        if (oldConn) {
-          console.log(`[${this.room.id}] Closing stale connection in lobby for: ${existingPlayer.name}`);
-          oldConn.close();
-        }
-        this.connections.delete(oldConnId);
-      }
-
-      this.connections.set(conn.id, {
-        playerId: conn.id,
-        deviceId
-      });
-
-      this.sendTo(conn, {
-        type: 'room_state',
-        state: getPublicRoomState(this.state)
-      });
-
-      this.broadcast({
-        type: 'player_reconnected',
-        playerId: conn.id
-      });
-
       return;
     }
 
