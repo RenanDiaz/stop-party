@@ -31,7 +31,7 @@ import {
   isNameTaken,
   transferHost
 } from './gameEngine';
-import { selectLetter } from './letterManager';
+import { selectLetter, createLetterPool } from './letterManager';
 import {
   initializeVoting,
   recordVote,
@@ -185,6 +185,12 @@ export default class StopPartyServer implements Party.Server {
   }
 
   private handleJoin(playerName: string, deviceId: string, conn: Party.Connection): void {
+    // If game is over, reset to lobby for a new game
+    if (this.state.phase === 'game_over') {
+      console.log(`[${this.room.id}] Game over - resetting to lobby for new game`);
+      this.resetToLobby();
+    }
+
     // Check if game already in progress
     if (this.state.phase !== 'lobby' && this.state.phase !== 'ready_check') {
       // Check if this player exists (for closing old connection)
@@ -784,6 +790,38 @@ export default class StopPartyServer implements Party.Server {
   private resetGame(): void {
     clearAllTimers(this.timers);
     this.state = createRoomState(this.room.id);
+  }
+
+  /**
+   * Reset to lobby for a new game, keeping players but resetting scores and game state
+   */
+  private resetToLobby(): void {
+    clearAllTimers(this.timers);
+
+    // Reset game state but keep players
+    this.state.phase = 'lobby';
+    this.state.currentRound = 0;
+    this.state.currentLetter = null;
+    this.state.usedLetters = [];
+    this.state.letterPool = createLetterPool();
+    this.state.roundStartedAt = null;
+    this.state.bastaCalledBy = null;
+    this.state.bastaCalledAt = null;
+    this.state.answers = new Map();
+    this.state.votes = new Map();
+    this.state.reactions = new Map();
+    this.state.votingStartedAt = null;
+    this.state.readyCheckStartedAt = null;
+    this.state.votingReadyPlayers = new Set();
+    this.state.processingBasta = false;
+    this.state.comments = [];
+
+    // Reset player scores and ready states
+    for (const player of this.state.players.values()) {
+      player.score = 0;
+      player.isReady = false;
+      player.filledCount = 0;
+    }
   }
 
   private handleKickPlayer(conn: Party.Connection, targetPlayerId: string): void {
