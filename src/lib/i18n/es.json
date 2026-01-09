@@ -46,6 +46,8 @@
     "immediate": "Corte inmediato",
     "seconds": "{n} segundos",
     "show_progress": "Mostrar progreso de otros",
+    "letter_weights": "Probabilidad ponderada de letras",
+    "letter_weights_desc": "Letras comunes aparecen más seguido",
     "round_time": "Tiempo límite por ronda",
     "no_limit": "Sin límite",
     "voting_time": "Tiempo para votar",

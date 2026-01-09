@@ -138,6 +138,30 @@
     </div>
   </div>
 
+  <!-- Letter Weights Toggle -->
+  <div class="flex items-center justify-between">
+    <div>
+      <label class="text-sm font-medium text-text-secondary">
+        {$_('config.letter_weights')}
+      </label>
+      <p class="text-xs text-text-muted mt-0.5">
+        {$_('config.letter_weights_desc')}
+      </p>
+    </div>
+    <button
+      type="button"
+      onclick={() => onChange({ useLetterWeights: !config.useLetterWeights })}
+      {disabled}
+      class="relative w-12 h-6 rounded-full transition-colors flex-shrink-0
+             {config.useLetterWeights ? 'bg-accent-primary' : 'bg-bg-primary'}"
+    >
+      <span
+        class="absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform
+               {config.useLetterWeights ? 'translate-x-6' : ''}"
+      ></span>
+    </button>
+  </div>
+
   <!-- Show Progress Toggle -->
   <div class="flex items-center justify-between">
     <label class="text-sm font-medium text-text-secondary">

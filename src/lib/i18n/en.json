@@ -46,6 +46,8 @@
     "immediate": "Immediate cut",
     "seconds": "{n} seconds",
     "show_progress": "Show others' progress",
+    "letter_weights": "Weighted letter probability",
+    "letter_weights_desc": "Common letters appear more often",
     "round_time": "Round time limit",
     "no_limit": "No limit",
     "voting_time": "Voting time",
