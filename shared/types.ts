@@ -24,6 +24,7 @@ export interface RoomConfig {
   maxPlayers: number;
   categories: string[];
   categoryPreset: string;
+  useLetterWeights: boolean; // true = weighted (common letters more likely), false = uniform probability
 }
 
 // Player state

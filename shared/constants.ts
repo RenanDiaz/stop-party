@@ -39,7 +39,8 @@ export const DEFAULT_CONFIG: RoomConfig = {
   timeBetweenRounds: 0, // Wait for all ready
   maxPlayers: MAX_PLAYERS,
   categories: [],
-  categoryPreset: 'classic'
+  categoryPreset: 'classic',
+  useLetterWeights: true
 };
 
 // Victory options

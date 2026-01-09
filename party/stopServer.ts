@@ -408,7 +408,7 @@ export default class StopPartyServer implements Party.Server {
 
   private startRound(): void {
     // Select a letter
-    const result = selectLetter(this.state.letterPool, this.state.usedLetters);
+    const result = selectLetter(this.state.letterPool, this.state.usedLetters, this.state.config.useLetterWeights);
     if (!result) {
       // No more letters, end game
       this.endGame();
@@ -803,7 +803,7 @@ export default class StopPartyServer implements Party.Server {
     this.state.currentRound = 0;
     this.state.currentLetter = null;
     this.state.usedLetters = [];
-    this.state.letterPool = createLetterPool();
+    this.state.letterPool = createLetterPool(this.state.config.useLetterWeights);
     this.state.roundStartedAt = null;
     this.state.bastaCalledBy = null;
     this.state.bastaCalledAt = null;

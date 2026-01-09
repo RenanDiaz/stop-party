@@ -1,17 +1,23 @@
 import { LETTER_WEIGHTS, ALL_LETTERS } from '../shared/constants';
 
 /**
- * Create initial letter pool with weighted probabilities
+ * Create initial letter pool
+ * @param useWeights - if true, use weighted probabilities (common letters more likely); if false, uniform probability
  */
-export function createLetterPool(): string[] {
+export function createLetterPool(useWeights: boolean = true): string[] {
   const pool: string[] = [];
 
-  for (const letter of ALL_LETTERS) {
-    const weight = LETTER_WEIGHTS[letter];
-    // Add letter multiple times based on weight
-    for (let i = 0; i < weight; i++) {
-      pool.push(letter);
+  if (useWeights) {
+    // Add each letter multiple times based on weight
+    for (const letter of ALL_LETTERS) {
+      const weight = LETTER_WEIGHTS[letter];
+      for (let i = 0; i < weight; i++) {
+        pool.push(letter);
+      }
     }
+  } else {
+    // Uniform probability - each letter appears once
+    pool.push(...ALL_LETTERS);
   }
 
   return shuffleArray(pool);
@@ -19,14 +25,15 @@ export function createLetterPool(): string[] {
 
 /**
  * Select a random letter from the pool and remove it
+ * @param useWeights - passed to createLetterPool if pool needs to be refreshed
  */
-export function selectLetter(pool: string[], usedLetters: string[]): { letter: string; newPool: string[] } | null {
+export function selectLetter(pool: string[], usedLetters: string[], useWeights: boolean = true): { letter: string; newPool: string[] } | null {
   // Filter out already used letters
   const availablePool = pool.filter(l => !usedLetters.includes(l));
 
   if (availablePool.length === 0) {
     // All letters used, create a new pool without used letters
-    const freshPool = createLetterPool().filter(l => !usedLetters.includes(l));
+    const freshPool = createLetterPool(useWeights).filter(l => !usedLetters.includes(l));
     if (freshPool.length === 0) {
       return null; // No more letters available
     }
