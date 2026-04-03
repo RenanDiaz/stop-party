@@ -35,7 +35,7 @@ export const DEFAULT_CONFIG: RoomConfig = {
   graceTimeAfterBasta: 5,
   showOthersProgress: false,
   roundTimeLimit: 0,
-  votingTimeLimit: 30,
+  votingTimeLimit: 0, // Wait for all ready
   timeBetweenRounds: 0, // Wait for all ready
   maxPlayers: MAX_PLAYERS,
   categories: [],

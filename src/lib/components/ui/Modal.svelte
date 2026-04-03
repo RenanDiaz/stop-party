@@ -35,13 +35,13 @@
     onclick={handleBackdropClick}
   >
     <div
-      class="w-full max-w-md bg-bg-secondary rounded-xl shadow-2xl overflow-hidden animate-pop"
+      class="w-full max-w-md max-h-[calc(100vh-2rem)] bg-bg-secondary rounded-xl shadow-2xl flex flex-col overflow-hidden animate-pop"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       {#if title}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-accent-secondary">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-accent-secondary shrink-0">
           <h2 id="modal-title" class="text-lg font-semibold text-text-primary">{title}</h2>
           <button
             onclick={() => {
@@ -63,12 +63,12 @@
         </div>
       {/if}
 
-      <div class="p-4">
+      <div class="p-4 overflow-y-auto min-h-0">
         {@render children()}
       </div>
 
       {#if footer}
-        <div class="px-4 py-3 border-t border-accent-secondary bg-bg-primary/50">
+        <div class="px-4 py-3 border-t border-accent-secondary bg-bg-primary/50 shrink-0">
           {@render footer()}
         </div>
       {/if}
