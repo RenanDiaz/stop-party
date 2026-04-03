@@ -496,6 +496,52 @@ class GameStore {
     if (me) {
       playerState.setId(me.id);
     }
+
+    // Restore phase-specific data (for reconnection)
+    if (state.phase === 'playing' || state.phase === 'basta_called') {
+      if (state.playerAnswers) {
+        this.localAnswers = state.playerAnswers;
+      }
+      // Restart round timer if configured
+      if (state.phase === 'playing' && this.config.roundTimeLimit > 0 && state.roundStartedAt) {
+        const elapsed = Math.floor((Date.now() - state.roundStartedAt) / 1000);
+        const remaining = Math.max(0, this.config.roundTimeLimit - elapsed);
+        this.roundTimeRemaining = remaining;
+        this.startRoundTimer();
+      }
+    } else if (state.phase === 'voting') {
+      if (state.allAnswers) {
+        this.allAnswers = state.allAnswers;
+      }
+      if (state.playerVotes) {
+        this.localVotes = state.playerVotes;
+      }
+      if (state.votingReadyPlayers) {
+        this.votingReadyPlayers = new Set(state.votingReadyPlayers);
+        // Check if this player was already marked as ready
+        if (me && state.votingReadyPlayers.includes(me.id)) {
+          this.isVotingReady = true;
+        }
+      }
+      // Restart voting timer if configured
+      if (this.config.votingTimeLimit > 0) {
+        this.votingTimeLimit = this.config.votingTimeLimit;
+        // We don't have votingStartedAt in PublicRoomState, so use the full time
+        // The server timer is authoritative; this is just for UI display
+        this.votingTimeRemaining = this.config.votingTimeLimit;
+        this.startVotingTimer();
+      }
+    } else if (state.phase === 'results' || state.phase === 'ready_check') {
+      if (state.roundResults) {
+        this.roundResults = state.roundResults;
+        // Update player scores from round results
+        for (const score of state.roundResults.playerScores) {
+          this.players = this.players.map((p) =>
+            p.id === score.playerId ? { ...p, score: score.totalScore } : p
+          );
+        }
+      }
+    }
   }
 
   private handleRoundStarted(msg: { round: number; letter: string; totalRounds: number }): void {

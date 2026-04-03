@@ -215,10 +215,10 @@ export default class StopPartyServer implements Party.Server {
           deviceId
         });
 
-        // Send current state
+        // Send current state with phase-specific data for this player
         this.sendTo(conn, {
           type: 'room_state',
-          state: getPublicRoomState(this.state)
+          state: getPublicRoomState(this.state, conn.id)
         });
 
         this.broadcast({
@@ -262,7 +262,7 @@ export default class StopPartyServer implements Party.Server {
 
       this.sendTo(conn, {
         type: 'room_state',
-        state: getPublicRoomState(this.state)
+        state: getPublicRoomState(this.state, conn.id)
       });
 
       this.broadcast({
@@ -735,6 +735,9 @@ export default class StopPartyServer implements Party.Server {
     // Calculate scores
     const roundResults = calculateScores(this.state, votingResults);
 
+    // Store for reconnection during results/ready_check
+    this.state.lastRoundResults = roundResults;
+
     this.broadcast({
       type: 'round_results',
       results: roundResults
@@ -815,6 +818,7 @@ export default class StopPartyServer implements Party.Server {
     this.state.votingReadyPlayers = new Set();
     this.state.processingBasta = false;
     this.state.comments = [];
+    this.state.lastRoundResults = null;
 
     // Reset player scores and ready states
     for (const player of this.state.players.values()) {

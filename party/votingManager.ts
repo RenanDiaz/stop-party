@@ -35,14 +35,16 @@ export function recordVote(
   const playerVotes = categoryVotes.get(targetPlayerId);
   if (!playerVotes) return false;
 
-  // Check if already voted
-  if (playerVotes.some(v => v.voterId === voterId)) {
-    return false;
-  }
-
   // Can't vote on own answer
   if (voterId === targetPlayerId) {
     return false;
+  }
+
+  // Check if already voted - update existing vote instead of rejecting
+  const existingVote = playerVotes.find(v => v.voterId === voterId);
+  if (existingVote) {
+    existingVote.isValid = isValid;
+    return true;
   }
 
   playerVotes.push({ voterId, isValid });
