@@ -5,7 +5,8 @@ import type {
   PlayerAnswers,
   Vote,
   AnswerReactions,
-  RoundComment
+  RoundComment,
+  RoundResults
 } from '../shared/types';
 
 // Internal room state (server-side only)
@@ -30,6 +31,7 @@ export interface RoomState {
   votingReadyPlayers: Set<string>; // Players who finished voting and are ready
   processingBasta: boolean; // Lock to prevent race conditions
   comments: RoundComment[]; // Comments for current round
+  lastRoundResults: RoundResults | null; // Stored for reconnection during results/ready_check
 }
 
 // Timer references

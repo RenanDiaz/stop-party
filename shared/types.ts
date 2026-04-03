@@ -157,4 +157,11 @@ export interface PublicRoomState {
   roundTimeRemaining: number | null;
   votingTimeRemaining: number | null;
   comments: RoundComment[];
+
+  // Phase-specific data for reconnection
+  allAnswers?: AllPlayerAnswers;           // voting phase
+  votingReadyPlayers?: string[];           // voting phase
+  roundResults?: RoundResults;             // results/ready_check phase
+  playerAnswers?: Record<string, string>;  // playing/basta_called - own answers
+  playerVotes?: Record<string, Record<string, boolean>>;  // voting - own existing votes
 }

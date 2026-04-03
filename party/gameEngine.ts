@@ -11,7 +11,7 @@ import type { RoomState } from './types';
 import { DEFAULT_CONFIG, SCORE_UNIQUE, SCORE_DUPLICATE, SCORE_INVALID } from '../shared/constants';
 import { getDefaultCategories } from '../shared/categories';
 import { createLetterPool, normalizeString, areAnswersDuplicate, answerStartsWithLetter } from './letterManager';
-import type { VotingResults } from '../shared/types';
+import type { VotingResults, AllPlayerAnswers } from '../shared/types';
 
 /**
  * Create initial room state
@@ -40,7 +40,8 @@ export function createRoomState(roomId: string): RoomState {
     readyCheckStartedAt: null,
     votingReadyPlayers: new Set(),
     processingBasta: false,
-    comments: []
+    comments: [],
+    lastRoundResults: null
   };
 }
 
@@ -204,9 +205,9 @@ export function toPublicPlayer(player: Player): PublicPlayer {
 }
 
 /**
- * Get public room state
+ * Get public room state, optionally including phase-specific data for a player
  */
-export function getPublicRoomState(state: RoomState): PublicRoomState {
+export function getPublicRoomState(state: RoomState, forPlayerId?: string): PublicRoomState {
   const players = Array.from(state.players.values()).map(toPublicPlayer);
 
   let totalRounds = 0;
@@ -214,7 +215,7 @@ export function getPublicRoomState(state: RoomState): PublicRoomState {
     totalRounds = state.config.victoryValue;
   }
 
-  return {
+  const result: PublicRoomState = {
     roomId: state.roomId,
     hostId: state.hostId,
     config: state.config,
@@ -231,6 +232,74 @@ export function getPublicRoomState(state: RoomState): PublicRoomState {
     votingTimeRemaining: null,
     comments: state.comments
   };
+
+  // Include phase-specific data for reconnecting players
+  if (forPlayerId) {
+    if (state.phase === 'playing' || state.phase === 'basta_called') {
+      // Include the player's own answers
+      const playerAnswers = state.answers.get(forPlayerId);
+      if (playerAnswers) {
+        result.playerAnswers = playerAnswers.answers;
+      }
+    } else if (state.phase === 'voting') {
+      // Include all answers for voting UI
+      result.allAnswers = getAllAnswersForVotingFromState(state);
+      // Include voting ready players
+      result.votingReadyPlayers = Array.from(state.votingReadyPlayers);
+      // Include the player's existing votes
+      result.playerVotes = extractPlayerVotes(state, forPlayerId);
+    } else if (state.phase === 'results' || state.phase === 'ready_check') {
+      // Include round results
+      if (state.lastRoundResults) {
+        result.roundResults = state.lastRoundResults;
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Get all player answers formatted for voting phase (used internally for reconnection)
+ */
+function getAllAnswersForVotingFromState(state: RoomState): AllPlayerAnswers {
+  const allAnswers: AllPlayerAnswers = {};
+
+  for (const [playerId, player] of state.players) {
+    if (!player.isConnected) continue;
+
+    const playerAnswers = state.answers.get(playerId);
+    allAnswers[playerId] = {
+      playerName: player.name,
+      answers: playerAnswers?.answers ?? {}
+    };
+  }
+
+  return allAnswers;
+}
+
+/**
+ * Extract a player's existing votes into a client-friendly format
+ */
+function extractPlayerVotes(
+  state: RoomState,
+  playerId: string
+): Record<string, Record<string, boolean>> {
+  const votes: Record<string, Record<string, boolean>> = {};
+
+  for (const [category, categoryVotes] of state.votes) {
+    for (const [targetPlayerId, playerVotes] of categoryVotes) {
+      const vote = playerVotes.find(v => v.voterId === playerId);
+      if (vote) {
+        if (!votes[category]) {
+          votes[category] = {};
+        }
+        votes[category][targetPlayerId] = vote.isValid;
+      }
+    }
+  }
+
+  return votes;
 }
 
 /**
